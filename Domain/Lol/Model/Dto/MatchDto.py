@@ -10,7 +10,7 @@ class MatchDto():
 		self.gameId                = apiData.get('gameId', None)
 		
 		self.participantIdentities = ([ParticipantIdentitiesDto(apiData['participantIdentities'][i])
-                                    for i in range(len(apiData['participantIdentities']))]
+                                    	    for i in range(len(apiData['participantIdentities']))]
 		                            if 'participantIdentities' in apiData.keys() else None)
 		
 		self.gameVersion           = apiData.get('gameVersion', None)    
@@ -23,7 +23,7 @@ class MatchDto():
 		                           if 'teams' in apiData.keys() else None)
 			
 		self.participants          = ([ParticipantDto(apiData['participants'][i])
-                                   for i in range(len(apiData['participants']))]
+                                           for i in range(len(apiData['participants']))]
 		                           if 'participants' in apiData.keys() else None)
 		
 		self.gameDuration          = apiData.get('gameDuration', None)

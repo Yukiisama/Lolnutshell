@@ -2,7 +2,7 @@ from Domain.Lol.Model.Services.RessourcesManager import RessourcesManager
 from Domain.Lol.Model.Dto.SummonerDto            import SummonerDto
 from Infrastructure.Lol.RiotWatcherHistory       import RiotWatcherHistory
 from riotwatcher import RiotWatcher, ApiError 
-API_KEY = "RGAPI-bd0d4c05-247b-4445-a674-2a2d17453fe2"
+API_KEY = #insert your key
 
 def main():
     print("LolNutshell v0.0")

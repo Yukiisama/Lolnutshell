@@ -10,6 +10,15 @@ class RiotWatcherHistory(History):
         self._location    = location
         self._lolWatcher  = lolWatcher
     
+    def getMatchbyId(self, matchId):
+        return MatchDto(self._lolWatcher.match.by_id(self._location, matchId))
+
+    def getMatchByReference(self, matchReference):
+        if matchReference and matchReference.gameId:
+            matchId = matchReference.gameId
+            return self.getMatchbyId(matchId)
+        return None
+
     def getLastMatch(self, modeSet = None):
         match = self.getLastMatchs(1, modeSet) 
         if match.matches:

@@ -1,18 +1,20 @@
+from riotwatcher import LolWatcher
+
 from Domain.Lol.Model.Services.RessourcesManager import RessourcesManager
-from Domain.Lol.Model.Dto.SummonerDto            import SummonerDto
-from Infrastructure.Lol.RiotWatcherHistory       import RiotWatcherHistory
-from riotwatcher import RiotWatcher, ApiError 
-API_KEY = #insert your key
+from Infrastructure.Lol.Mediator import Mediator
+
+# You must define your own config file with key_riot.
+API_KEY     = RessourcesManager().config['key_riot']
+LOL_WATCHER = LolWatcher(API_KEY)
+MEDIATOR    = Mediator(LOL_WATCHER)
+
 
 def main():
     print("LolNutshell v0.0")
-    #do stuff ...
+    # do stuff ...
+    #MEDIATOR.showLastMatch("yukíi")
+    MEDIATOR.winRate(10,0,"yukíi", 420)
     print("Bye")
-    a = RessourcesManager()
-    lolWatcher  = RiotWatcher(API_KEY)
-    location    = 'euw1'
-    profile     = SummonerDto(lolWatcher.summoner.by_name(location, 'yukíi'))
-    history     = RiotWatcherHistory(profile, location, lolWatcher)
-    matchRef = history.getLastMatch()
-    history.getMatchByReference(matchRef).print()
-main()    
+
+
+main()

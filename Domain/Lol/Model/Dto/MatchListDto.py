@@ -1,6 +1,6 @@
 from Domain.Lol.Model.Dto.MatchReferenceDto import MatchReferenceDto
 
-class MatchListDto:
+class MatchListDto():
     
     def __init__(self, apiData):
         self.matches    = ([MatchReferenceDto(apiData['matches'][i])

@@ -1,13 +1,24 @@
 from abc import ABC, abstractmethod
 
+from Domain.Lol.Model.Dto import MatchListDto, MatchDto
+
+
 class History(ABC):
     
     @abstractmethod
     def getLastMatch(self, mode):
         pass
-    
+
     @abstractmethod
-    def getLastMatchs(self, nbMatches, mode):
+    def getAccountID(self):
+        pass
+
+    @abstractmethod
+    def getMatchByReference(self, matchReference) -> MatchDto:
+        pass
+
+    @abstractmethod
+    def getLastMatchs(self, nbMatches, mode) -> MatchListDto:
         pass
     
     @abstractmethod

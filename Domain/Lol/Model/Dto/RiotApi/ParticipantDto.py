@@ -1,5 +1,5 @@
-from Domain.Lol.Model.Dto.ParticipantStatsDto    import ParticipantStatsDto
-from Domain.Lol.Model.Dto.ParticipantTimeLineDto import ParticipantTimeLineDto
+from Domain.Lol.Model.Dto.RiotApi.ParticipantStatsDto import ParticipantStatsDto
+from Domain.Lol.Model.Dto.RiotApi.ParticipantTimeLineDto import ParticipantTimeLineDto
 
 class ParticipantDto():
     def __init__(self, apiData):

@@ -1,7 +1,7 @@
 from Domain.Lol.Model.Commands.Command import Command
-from Domain.Lol.Model.Dto.MatchDto import MatchDto
-from Domain.Lol.Model.Dto.MatchListDto import MatchListDto
-from Domain.Lol.Model.Dto.MatchReferenceDto import MatchReferenceDto
+from Domain.Lol.Model.Dto.RiotApi.MatchDto import MatchDto
+from Domain.Lol.Model.Dto.RiotApi.MatchListDto import MatchListDto
+from Domain.Lol.Model.Dto.RiotApi.MatchReferenceDto import MatchReferenceDto
 
 WIN = "Win"
 
@@ -21,7 +21,7 @@ class CmdWinRate(Command):
             return self.__RunNbMatch(True)
         elif self.__validNbMatch():
             return self.__RunNbMatch()
-
+        # Todo : changer en objet win rate
     def __RunNbMatch(self, champion=False):
         lastMatches = self.getLastMatchs()
         wins = 0

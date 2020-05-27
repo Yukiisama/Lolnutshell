@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from Domain.Lol.Model.Dto import MatchListDto, MatchDto
+from Domain.Lol.Model.Dto.RiotApi import MatchListDto, MatchDto
 
 
 class History(ABC):

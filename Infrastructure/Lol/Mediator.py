@@ -1,5 +1,5 @@
 from Domain.Lol.Model.Commands.PersonalStatsCommand.CmdWinRate import CmdWinRate
-from Domain.Lol.Model.Dto.SummonerDto import SummonerDto
+from Domain.Lol.Model.Dto.RiotApi.SummonerDto import SummonerDto
 from Domain.Lol.Model.Interfaces.IMediator import IMediator
 from Infrastructure.Lol.RiotWatcherHistory import RiotWatcherHistory
 

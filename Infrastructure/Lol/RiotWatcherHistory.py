@@ -1,5 +1,5 @@
-from Domain.Lol.Model.Dto.MatchDto import MatchDto
-from Domain.Lol.Model.Dto.MatchListDto import MatchListDto
+from Domain.Lol.Model.Dto.RiotApi.MatchDto import MatchDto
+from Domain.Lol.Model.Dto.RiotApi.MatchListDto import MatchListDto
 from Domain.Lol.Model.Interfaces.History import History
 
 
@@ -21,9 +21,9 @@ class RiotWatcherHistory(History):
         if matchReference and matchReference.gameId:
             matchId = matchReference.gameId
             return self.getMatchbyId(matchId)
-        return MatchDto
+        return None
 
-    def getLastMatch(self, modeSet = None):
+    def getLastMatch(self, modeSet=None):
         match = self.getLastMatchs(1, modeSet) 
         if match.matches:
             return match.matches[0]

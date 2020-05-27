@@ -1,6 +1,6 @@
-from Domain.Lol.Model.Dto.ParticipantDto import ParticipantDto
-from Domain.Lol.Model.Dto.ParticipantIdentitiesDto import ParticipantIdentitiesDto
-from Domain.Lol.Model.Dto.TeamStatsDto import TeamStatsDto
+from Domain.Lol.Model.Dto.RiotApi.ParticipantDto import ParticipantDto
+from Domain.Lol.Model.Dto.RiotApi.ParticipantIdentitiesDto import ParticipantIdentitiesDto
+from Domain.Lol.Model.Dto.RiotApi.TeamStatsDto import TeamStatsDto
 
 
 class MatchDto():

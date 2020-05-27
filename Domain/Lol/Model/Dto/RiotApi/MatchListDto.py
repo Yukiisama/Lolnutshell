@@ -1,4 +1,4 @@
-from Domain.Lol.Model.Dto.MatchReferenceDto import MatchReferenceDto
+from Domain.Lol.Model.Dto.RiotApi.MatchReferenceDto import MatchReferenceDto
 
 class MatchListDto():
     

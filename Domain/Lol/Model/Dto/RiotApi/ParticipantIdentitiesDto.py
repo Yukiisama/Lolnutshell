@@ -1,4 +1,4 @@
-from Domain.Lol.Model.Dto.PlayerDto import PlayerDto
+from Domain.Lol.Model.Dto.RiotApi.PlayerDto import PlayerDto
 
 class ParticipantIdentitiesDto:
     

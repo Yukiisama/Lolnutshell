@@ -1,4 +1,4 @@
-from Domain.Lol.Model.Dto.TeamBansDto import TeamBansDto
+from Domain.Lol.Model.Dto.RiotApi.TeamBansDto import TeamBansDto
 
 class TeamStatsDto:
 

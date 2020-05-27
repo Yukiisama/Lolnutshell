@@ -7,18 +7,18 @@ class MatchDto():
 
     def __init__(self, apiData):
         self.seasonId = apiData.get('seasonId', None)
-        self.queueId = apiData.get('queueId', None)
-        self.gameId = apiData.get('gameId', None)
+        self.queueId  = apiData.get('queueId', None)
+        self.gameId   = apiData.get('gameId', None)
 
         self.participantIdentities = ([ParticipantIdentitiesDto(apiData['participantIdentities'][i])
                                        for i in range(len(apiData['participantIdentities']))]
                                       if 'participantIdentities' in apiData.keys() else None)
 
         self.gameVersion = apiData.get('gameVersion', None)
-        self.platformId = apiData.get('platformId', None)
-        self.gameMode = apiData.get('gameMode', None)
-        self.mapId = apiData.get('mapId', None)
-        self.gameType = apiData.get('gameType', None)
+        self.platformId  = apiData.get('platformId', None)
+        self.gameMode    = apiData.get('gameMode', None)
+        self.mapId       = apiData.get('mapId', None)
+        self.gameType    = apiData.get('gameType', None)
 
         self.teams = ([TeamStatsDto(apiData['teams'][i]) for i in range(len(apiData['teams']))]
                       if 'teams' in apiData.keys() else None)
@@ -61,7 +61,7 @@ class MatchDto():
     def getParticipantIDFromAccountID(self, accountID):
         for pid in self.participantIdentities:
             if pid.player.accountId == accountID:
-                return pid.participantId - 1
+                return pid.participantId
 
     def getTeamIdFromParticipantId(self, participantId):
         for participant in self.participants:

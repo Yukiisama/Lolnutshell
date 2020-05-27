@@ -11,12 +11,14 @@ WIN = "Win"
 class CmdWinRate(Command):
 
     def __init__(self, nbMatch, nbDays, name, mode, history, championId):
-        self._nbMatch = nbMatch
-        self._nbDays = nbDays
-        self._name = name
-        self._mode = mode
-        self._history = history
-        self._championId = championId
+        self._nbMatch     = nbMatch
+        self._nbDays      = nbDays
+        self._name        = name
+        self._mode        = mode
+        self._history     = history
+        self._championId  = championId
+        self._lastMatchs  = None
+        self._dictMatch   = dict()
 
     def run(self):
         if self.__validNbMatch():
@@ -45,7 +47,7 @@ class CmdWinRate(Command):
         for m in lastMatches.matches:
             match        = self.getMatchDto(m)
             myID, myTeam = self.getIDandTeam(match)
-            champion     = RessourcesManager().getChampionbyID(match.participants[myID].championId)
+            champion     = RessourcesManager().getChampionbyID(match.participants[myID - 1].championId)
 
             for team in match.teams:
                 if team.teamId == myTeam and team.win == WIN:
@@ -63,13 +65,12 @@ class CmdWinRate(Command):
 
         # Simply add WinRate for each champion
         for champion in dictChampionWinRate:
-            print (champion)
             wins = dictChampionWinRate[champion][0]
             games = dictChampionWinRate[champion][2]
             if games != 0:
                 dictChampionWinRate[champion][3] = (wins / games) * 100
-        # Finally sorted it in order of games
 
+        # Finally sorted it in order of games
         dictChampionWinRate = dict(sorted(
                                     dictChampionWinRate.items(),
                                     reverse=True,
@@ -79,10 +80,14 @@ class CmdWinRate(Command):
 
 
     def getLastMatchs(self) -> MatchListDto:
-        return self._history.getLastMatchs(self._nbMatch, self._mode)
+        if self._lastMatchs is None:
+            self._lastMatchs = self._history.getLastMatchs(self._nbMatch, self._mode)
+        return self._lastMatchs
 
     def getMatchDto(self, matchRef: MatchReferenceDto) -> MatchDto:
-        return self._history.getMatchByReference(matchRef)
+        if self._dictMatch.get(matchRef) is None:
+            self._dictMatch[matchRef] = self._history.getMatchByReference(matchRef)
+        return self._dictMatch[matchRef]
 
     def __validNbMatch(self):
         return self._nbMatch is not None and self._nbMatch != 0

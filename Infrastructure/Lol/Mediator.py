@@ -7,15 +7,16 @@ from Infrastructure.Lol.RiotWatcherHistory import RiotWatcherHistory
 class Mediator(IMediator):
 
     def __init__(self, lolWatcher):
-        self._lolWatcher = lolWatcher
+        self._lolWatcher  = lolWatcher
+        self._historyDict = dict()
 
-    def winRate(self, nbMatches, nbDays, name, mode, championId=None):
+    def winRate(self, nbMatches, nbDays, name, mode=None, championId=None):
         cmd = CmdWinRate(nbMatches,
                          nbDays,
                          name,
                          mode,
                          self.getRiotWatcherHistory(name),
-                         championId
+                         championId,
                          )
         winRate = cmd.run()
         winRate.print()
@@ -27,6 +28,10 @@ class Mediator(IMediator):
         history.getMatchByReference(matchRef).print()
 
     def getRiotWatcherHistory(self, name):
-        location = 'euw1'
-        profile = SummonerDto(self._lolWatcher.summoner.by_name(location, name))
-        return RiotWatcherHistory(profile, location, self._lolWatcher)
+        if not self._historyDict.get(name):
+            location = 'euw1'
+            profile  = SummonerDto(self._lolWatcher.summoner.by_name(location, name))
+            history  = RiotWatcherHistory(profile, location, self._lolWatcher)
+            self._historyDict[name] = history
+
+        return self._historyDict[name]

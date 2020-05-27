@@ -17,6 +17,7 @@ class Mediator(IMediator):
                          mode,
                          self.getRiotWatcherHistory(name),
                          championId,
+                         self.getRiotWatcherHistory(name).getLastMatchs(nbMatches, mode)
                          )
         winRate = cmd.run()
         winRate.print()

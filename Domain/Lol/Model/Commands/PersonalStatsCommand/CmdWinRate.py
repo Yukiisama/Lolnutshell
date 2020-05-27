@@ -10,14 +10,14 @@ WIN = "Win"
 
 class CmdWinRate(Command):
 
-    def __init__(self, nbMatch, nbDays, name, mode, history, championId):
+    def __init__(self, nbMatch, nbDays, name, mode, history, championId, lastMatches):
         self._nbMatch     = nbMatch
         self._nbDays      = nbDays
         self._name        = name
         self._mode        = mode
         self._history     = history
         self._championId  = championId
-        self._lastMatchs  = None
+        self._lastMatchs  = lastMatches
         self._dictMatch   = dict()
 
     def run(self):
@@ -80,8 +80,6 @@ class CmdWinRate(Command):
 
 
     def getLastMatchs(self) -> MatchListDto:
-        if self._lastMatchs is None:
-            self._lastMatchs = self._history.getLastMatchs(self._nbMatch, self._mode)
         return self._lastMatchs
 
     def getMatchDto(self, matchRef: MatchReferenceDto) -> MatchDto:

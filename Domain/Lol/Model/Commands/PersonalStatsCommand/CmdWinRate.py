@@ -2,6 +2,8 @@ from Domain.Lol.Model.Commands.Command import Command
 from Domain.Lol.Model.Dto.RiotApi.MatchDto import MatchDto
 from Domain.Lol.Model.Dto.RiotApi.MatchListDto import MatchListDto
 from Domain.Lol.Model.Dto.RiotApi.MatchReferenceDto import MatchReferenceDto
+from Domain.Lol.Model.Dto.Stats.WinRate import WinRate
+from Domain.Lol.Model.Services.RessourcesManager import RessourcesManager
 
 WIN = "Win"
 
@@ -9,34 +11,71 @@ WIN = "Win"
 class CmdWinRate(Command):
 
     def __init__(self, nbMatch, nbDays, name, mode, history, championId):
-        self._nbMatch    = nbMatch
-        self._nbDays     = nbDays
-        self._name       = name
-        self._mode       = mode
-        self._history    = history
+        self._nbMatch = nbMatch
+        self._nbDays = nbDays
+        self._name = name
+        self._mode = mode
+        self._history = history
         self._championId = championId
 
     def run(self):
-        if self._championId is not None and self.__validNbMatch():
-            return self.__RunNbMatch(True)
-        elif self.__validNbMatch():
-            return self.__RunNbMatch()
-        # Todo : changer en objet win rate
-    def __RunNbMatch(self, champion=False):
+        if self.__validNbMatch():
+            globalWinRate        = self.__globalWinRate()
+            championsWinRateDict = self.__championWinRates()
+            return WinRate(globalWinRate, championsWinRateDict, self._nbDays)
+        return None
+
+    def __globalWinRate(self):
         lastMatches = self.getLastMatchs()
         wins = 0
         for m in lastMatches.matches:
             match = self.getMatchDto(m)
-            myID = match.getParticipantIDFromAccountID(self._history.getAccountID())
-            myTeam = match.getTeamIdFromParticipantId(myID)
+            myID, myTeam = self.getIDandTeam(match)
             for team in match.teams:
                 if team.teamId == myTeam and team.win == WIN:
-                    if champion and match.participants[myID].championId == self._championId:
-                        wins += 1
-                    elif not champion:
-                        wins += 1
-
+                    wins += 1
         return (wins / self._nbMatch) * 100
+
+    def __championWinRates(self):
+
+        # [champion][win][loose][nbgame][winRate]
+        dictChampionWinRate = dict()
+        lastMatches = self.getLastMatchs()
+
+        for m in lastMatches.matches:
+            match        = self.getMatchDto(m)
+            myID, myTeam = self.getIDandTeam(match)
+            champion     = RessourcesManager().getChampionbyID(match.participants[myID].championId)
+
+            for team in match.teams:
+                if team.teamId == myTeam and team.win == WIN:
+                    if champion in dictChampionWinRate:
+                        dictChampionWinRate[champion][0] += 1
+                    else:
+                        dictChampionWinRate[champion] = [1, 0, 0, 0]
+                    dictChampionWinRate[champion][2] += 1
+                elif team.teamId == myTeam and team.win != WIN:
+                    if champion in dictChampionWinRate:
+                        dictChampionWinRate[champion][1] += 1
+                    else:
+                        dictChampionWinRate[champion] = [0, 1, 0, 0]
+                    dictChampionWinRate[champion][2] += 1
+
+        # Simply add WinRate for each champion
+        for champion in dictChampionWinRate:
+            print (champion)
+            wins = dictChampionWinRate[champion][0]
+            games = dictChampionWinRate[champion][2]
+            if games != 0:
+                dictChampionWinRate[champion][3] = (wins / games) * 100
+        # Finally sorted it in order of games
+
+        dictChampionWinRate = dict(sorted(
+                                    dictChampionWinRate.items(),
+                                    reverse=True,
+                                    key=lambda wl: wl[1][2]
+                                    ))
+        return dictChampionWinRate
 
 
     def getLastMatchs(self) -> MatchListDto:
@@ -47,4 +86,10 @@ class CmdWinRate(Command):
 
     def __validNbMatch(self):
         return self._nbMatch is not None and self._nbMatch != 0
+
+    def getIDandTeam(self, match: MatchDto):
+        myID = match.getParticipantIDFromAccountID(self._history.getAccountID())
+        myTeam = match.getTeamIdFromParticipantId(myID)
+        return myID, myTeam
+
 

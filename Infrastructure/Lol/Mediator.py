@@ -18,7 +18,7 @@ class Mediator(IMediator):
                          championId
                          )
         winRate = cmd.run()
-        print(winRate)
+        winRate.print()
         return winRate
 
     def showLastMatch(self, name):

@@ -61,7 +61,7 @@ class MatchDto():
     def getParticipantIDFromAccountID(self, accountID):
         for pid in self.participantIdentities:
             if pid.player.accountId == accountID:
-                return pid.participantId
+                return pid.participantId - 1
 
     def getTeamIdFromParticipantId(self, participantId):
         for participant in self.participants:

@@ -1,4 +1,5 @@
 from Domain.Lol.Model.Commands.Command import Command
+from Domain.Lol.Model.Commands.PersonalStatsCommand.CmdPersonalStats import CmdPersonalStats
 from Domain.Lol.Model.Dto.RiotApi.MatchDto import MatchDto
 from Domain.Lol.Model.Dto.RiotApi.MatchListDto import MatchListDto
 from Domain.Lol.Model.Dto.RiotApi.MatchReferenceDto import MatchReferenceDto
@@ -8,20 +9,13 @@ from Domain.Lol.Model.Services.RessourcesManager import RessourcesManager
 WIN = "Win"
 
 
-class CmdWinRate(Command):
+class CmdWinRate(CmdPersonalStats):
 
     def __init__(self, nbMatch, nbDays, name, mode, history, championId, lastMatches):
-        self._nbMatch     = nbMatch
-        self._nbDays      = nbDays
-        self._name        = name
-        self._mode        = mode
-        self._history     = history
-        self._championId  = championId
-        self._lastMatchs  = lastMatches
-        self._dictMatch   = dict()
+        super().__init__(nbMatch, nbDays, name, mode, history, championId, lastMatches)
 
     def run(self):
-        if self.__validNbMatch():
+        if self.validNbMatch():
             globalWinRate        = self.__globalWinRate()
             championsWinRateDict = self.__championWinRates()
             return WinRate(globalWinRate, championsWinRateDict, self._nbDays)
@@ -79,20 +73,6 @@ class CmdWinRate(Command):
         return dictChampionWinRate
 
 
-    def getLastMatchs(self) -> MatchListDto:
-        return self._lastMatchs
 
-    def getMatchDto(self, matchRef: MatchReferenceDto) -> MatchDto:
-        if self._dictMatch.get(matchRef) is None:
-            self._dictMatch[matchRef] = self._history.getMatchByReference(matchRef)
-        return self._dictMatch[matchRef]
-
-    def __validNbMatch(self):
-        return self._nbMatch is not None and self._nbMatch != 0
-
-    def getIDandTeam(self, match: MatchDto):
-        myID = match.getParticipantIDFromAccountID(self._history.getAccountID())
-        myTeam = match.getTeamIdFromParticipantId(myID)
-        return myID, myTeam
 
 

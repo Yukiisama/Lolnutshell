@@ -1,3 +1,4 @@
+from Domain.Lol.Model.Commands.PersonalStatsCommand.CmdKdaCs import CmdKdaCs
 from Domain.Lol.Model.Commands.PersonalStatsCommand.CmdWinRate import CmdWinRate
 from Domain.Lol.Model.Dto.RiotApi.SummonerDto import SummonerDto
 from Domain.Lol.Model.Interfaces.IMediator import IMediator
@@ -22,6 +23,19 @@ class Mediator(IMediator):
         winRate = cmd.run()
         winRate.print()
         return winRate
+
+    def KdaCs(self, nbMatches, nbDays, name, mode=None, championId=None):
+        cmd = CmdKdaCs(nbMatches,
+                         nbDays,
+                         name,
+                         mode,
+                         self.getRiotWatcherHistory(name),
+                         championId,
+                         self.getRiotWatcherHistory(name).getLastMatchs(nbMatches, mode)
+                         )
+        kdaCs = cmd.run()
+        kdaCs.print()
+        return kdaCs
 
     def showLastMatch(self, name):
         history = self.getRiotWatcherHistory(name)

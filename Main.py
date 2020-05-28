@@ -13,7 +13,8 @@ def main():
     print("LolNutshell v0.0")
     # do stuff ...
     #MEDIATOR.showLastMatch("yukíi")
-    MEDIATOR.winRate(50,0,"yukíi", None)
+    MEDIATOR.winRate(20,0,"yukíi", None)
+    MEDIATOR.KdaCs(20,0,"yukíi", None)
     print("Bye")
 
 

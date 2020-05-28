@@ -7,5 +7,7 @@ class WinRate:
 
     def print(self):
         print("GlobalWinRate     : ", self.globalWinRate)
-        print("championsWinRates : ", self.championDictWinRate)
+        print("Champion WinRates : wins, looses, nbgames, winrate ")
+        for champion in self.championDictWinRate:
+            print(" {} : {} ".format(champion, self.championDictWinRate[champion]))
         print("Days : ", self.days)

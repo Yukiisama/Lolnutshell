@@ -1,5 +1,7 @@
 from Domain.Lol.Model.Dto.RiotApi.ParticipantStatsDto import ParticipantStatsDto
 from Domain.Lol.Model.Dto.RiotApi.ParticipantTimeLineDto import ParticipantTimeLineDto
+from Domain.Lol.Model.Services.RessourcesManager import RessourcesManager
+
 
 class ParticipantDto():
     def __init__(self, apiData):
@@ -42,4 +44,5 @@ class ParticipantDto():
         
         print("     stats: ")
         self.stats.print()
+
         

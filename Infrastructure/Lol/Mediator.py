@@ -3,6 +3,7 @@ from Domain.Lol.Model.Commands.PersonalStatsCommand.CmdWinRate import CmdWinRate
 from Domain.Lol.Model.Dto.RiotApi.SummonerDto import SummonerDto
 from Domain.Lol.Model.Interfaces.IMediator import IMediator
 from Infrastructure.Lol.RiotWatcherHistory import RiotWatcherHistory
+from Infrastructure.Lol.RiotWatcherRanking import RiotWatcherRanking
 
 
 class Mediator(IMediator):
@@ -50,3 +51,9 @@ class Mediator(IMediator):
             self._historyDict[name] = history
 
         return self._historyDict[name]
+
+    def getRiotRanking(self, name):
+        location = 'euw1'
+        profile  = SummonerDto(self._lolWatcher.summoner.by_name(location, name))
+        ranking  = RiotWatcherRanking(profile, location, self._lolWatcher)
+        return ranking

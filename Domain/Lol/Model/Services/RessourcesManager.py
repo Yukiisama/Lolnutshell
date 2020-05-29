@@ -1,26 +1,28 @@
 import json
-
+import conf
 import requests
 
 from Ressources.Metaclass.Singleton import Singleton
 
-QUEUES = "Ressources/Json/queues.json"
-CONFIG = "Ressources/Json/config.json"
-VERSION = "https://ddragon.leagueoflegends.com/api/versions.json"
-CHAMPION = "http://ddragon.leagueoflegends.com/cdn/{}/data/en_US/champion.json"
+QUEUES   = conf.ROOT_DIR + "/Ressources/Json/queues.json"
+CONFIG   = conf.ROOT_DIR + "/Ressources/Json/config.json"
+VERSION  = "https://ddragon.leagueoflegends.com/api/versions.json"
+CHAMPION = "http://ddragon.leagueoflegends.com/cdn/10.11.1/data/en_US/champion.json"
+SPELLS   = "http://ddragon.leagueoflegends.com/cdn/10.11.1/data/en_US/summoner.json"
 
-
-def importChampion():
+def importDDragon(link, spells=None):
     version = requests.get(VERSION).json()[0]
-    datadragon = requests.get(CHAMPION.format(version)).json()
-    champions = {}
-    for champion in datadragon["data"]:
-        id = int(datadragon["data"][champion]["key"])
-        champions[id] = champion
-    return champions
+    datadragon = requests.get(link.format(version)).json()
+    data = {}
+    for key in datadragon["data"]:
+        id = int(datadragon["data"][key]["key"])
+        data[id] = key if spells is None else datadragon["data"][key]["name"]
+    return data
+
 
 class RessourcesManager(metaclass=Singleton):
-    champions = importChampion()
+    champions = importDDragon(CHAMPION)
+    spells    = importDDragon(SPELLS, True)
 
     def __init__(self):
         self.queues = self.importJson(QUEUES)
@@ -34,3 +36,6 @@ class RessourcesManager(metaclass=Singleton):
 
     def getChampionbyID(self, id: int):
         return RessourcesManager.champions[id]
+
+    def getSpellById(self, id: int):
+        return RessourcesManager.spells[id]

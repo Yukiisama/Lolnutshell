@@ -3,6 +3,7 @@ from riotwatcher import LolWatcher
 import conf
 from Domain.Lol.Model.Services.RessourcesManager import RessourcesManager
 from Infrastructure.Lol.Mediator import Mediator
+from discord.utils import get
 import os
 
 # You must define your own config file with key_riot.
@@ -11,7 +12,7 @@ LOL_WATCHER = LolWatcher(API_KEY)
 MEDIATOR    = Mediator(LOL_WATCHER)
 
 client = discord.Client()
-TOKEN  = RessourcesManager.config['token']
+TOKEN  = RessourcesManager().config['token']
 PREFIX = "!a"
 
 @client.event
@@ -28,6 +29,7 @@ async def on_message(message):
     await help(message, args[0], args)
     await rank(message, args[0], args)
     await match(message, args[0], args)
+    await kda(message, args[0], args)
 
 
 async def streamsCommands(message, command, args):
@@ -152,4 +154,46 @@ async def sendRank(message, args, participants):
     embed.add_field(name="** Players **", value=string[1])
     await message.channel.send(embed=embed)
 
+
+def embedKda(message, dict, embed):
+    string = ""
+    for kdaCs in dict:
+        string += "\n** kills** " + str(dict[kdaCs][0])
+        string += "\n** deaths** " + str(dict[kdaCs][1]) + "\n** assists** " + str(dict[kdaCs][2])
+        string += "\n** cs** " + str(dict[kdaCs][3]) + "\n"
+        embed.add_field(name="**" + kdaCs + "**: ", value=string, inline=False)
+    return embed
+
+
+async def kda(message, command, args):
+    # !a match name, nbgames, mode, champion
+    print(args)
+    mode = None
+    if len(args) > 3:
+        mode = args[3]
+    champ = None
+    if len(args) > 4:
+        champ = args[4]
+    if command == "kda":
+        # Todo: faire nb days
+        kda   = MEDIATOR.KdaCs(int(args[2]), 0, args[1], mode, champ)
+        embed = discord.Embed(title="**Kda and Cs**", color=discord.colour.Color.dark_red())
+        embed.add_field(name="**Global Mean Kda**: ", value="\n** kills** "+ str(kda.meanGlobalKda[0]) + "\n** deaths** "
+                                                        + str(kda.meanGlobalKda[1]) +"\n** assists** "+ str(kda.meanGlobalKda[2]))
+        embed.add_field(name="**Global Kda**: ",value="\n** kills** "+ str(kda.globalKda[0]) +
+                                                  "\n** deaths** "+ str(kda.globalKda[1]) +"\n** assists** "+ str(kda.globalKda[2]))
+        embed.add_field(name="**Global Mean Cs**: ", value=kda.meanGlobalCs)
+        embed.add_field(name="**Global Cs**: ", value=kda.globalCs)
+
+        await message.channel.send(embed=embed)
+        embed = discord.Embed(title="**Mean Global Kda and Cs**", color=discord.colour.Color.dark_purple())
+        #Todo: définir Thumbnails
+        embed = embedKda(message, kda.dictMeanKdaCs, embed)
+        await message.channel.send(embed=embed)
+        embed = discord.Embed(title="**Global Kda and Cs**", color=discord.colour.Color.dark_teal())
+        embed = embedKda(message, kda.dictKdaCs, embed)
+        await message.channel.send(embed=embed)
 client.run(TOKEN)
+
+
+

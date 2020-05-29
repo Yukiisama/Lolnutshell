@@ -11,7 +11,7 @@ LOL_WATCHER = LolWatcher(API_KEY)
 MEDIATOR    = Mediator(LOL_WATCHER)
 
 client = discord.Client()
-TOKEN  = "NTgwNzI2NDI4MjYyNDY1NTM4.XOU6Hw.IGA972QHoaAtu6vHLEUC30JN0pQ"
+TOKEN  = RessourcesManager.config['token']
 PREFIX = "!a"
 
 @client.event

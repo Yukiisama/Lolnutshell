@@ -39,3 +39,9 @@ class RessourcesManager(metaclass=Singleton):
 
     def getSpellById(self, id: int):
         return RessourcesManager.spells[id]
+
+    def getIconUrlById(self, id: int):
+        return "http://ddragon.leagueoflegends.com/cdn/10.11.1/img/profileicon/" + str(id) +".png"
+
+    def getChampIconUrlByName(self, name):
+        return "http://ddragon.leagueoflegends.com/cdn/10.11.1/img/champion/"+ name +".png"

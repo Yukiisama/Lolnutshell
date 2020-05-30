@@ -52,6 +52,10 @@ class Mediator(IMediator):
 
         return self._historyDict[name]
 
+    def getProfile(self, name):
+        location = 'euw1'
+        return SummonerDto(self._lolWatcher.summoner.by_name(location, name))
+
     def getRiotRanking(self, name):
         location = 'euw1'
         profile  = SummonerDto(self._lolWatcher.summoner.by_name(location, name))

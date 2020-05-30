@@ -3,6 +3,10 @@ from riotwatcher import LolWatcher
 import conf
 from Domain.Lol.Model.Services.RessourcesManager import RessourcesManager
 from Infrastructure.Lol.Mediator import Mediator
+import random
+
+# Todo: Refactorer en objet quand comportement un peu plus défini
+
 from discord.utils import get
 import os
 
@@ -156,18 +160,20 @@ async def sendRank(message, args, participants):
 
 
 def embedKda(message, dict, embed):
-    string = ""
+
     for kdaCs in dict:
+        string = ""
         string += "\n** kills** " + str(dict[kdaCs][0])
         string += "\n** deaths** " + str(dict[kdaCs][1]) + "\n** assists** " + str(dict[kdaCs][2])
-        string += "\n** cs** " + str(dict[kdaCs][3]) + "\n"
-        embed.add_field(name="**" + kdaCs + "**: ", value=string, inline=False)
+        string += "\n** cs** " + str(dict[kdaCs][3]) + "\n** cs by Min** " + str( "%.2f" % dict[kdaCs][6])
+        string += "\n** nb games ** " + str(dict[kdaCs][4])
+        string += "\n** time played ** " + str(dict[kdaCs][5]) + "\n"
+        embed.add_field(name="**" + kdaCs + "**: ", value=string, inline=True)
     return embed
 
 
 async def kda(message, command, args):
     # !a match name, nbgames, mode, champion
-    print(args)
     mode = None
     if len(args) > 3:
         mode = args[3]
@@ -177,22 +183,43 @@ async def kda(message, command, args):
     if command == "kda":
         # Todo: faire nb days
         kda   = MEDIATOR.KdaCs(int(args[2]), 0, args[1], mode, champ)
-        embed = discord.Embed(title="**Kda and Cs**", color=discord.colour.Color.dark_red())
+        embed = discord.Embed(title="**Kda and Cs on " + args[2] + " games**", color=discord.colour.Color.dark_red())
+
+        iconId = MEDIATOR.getProfile(args[1]).profileIconId
+        embed.set_thumbnail(url=RessourcesManager().getIconUrlById(iconId))
+
         embed.add_field(name="**Global Mean Kda**: ", value="\n** kills** "+ str(kda.meanGlobalKda[0]) + "\n** deaths** "
                                                         + str(kda.meanGlobalKda[1]) +"\n** assists** "+ str(kda.meanGlobalKda[2]))
+
         embed.add_field(name="**Global Kda**: ",value="\n** kills** "+ str(kda.globalKda[0]) +
                                                   "\n** deaths** "+ str(kda.globalKda[1]) +"\n** assists** "+ str(kda.globalKda[2]))
+
         embed.add_field(name="**Global Mean Cs**: ", value=kda.meanGlobalCs)
         embed.add_field(name="**Global Cs**: ", value=kda.globalCs)
+        embed.add_field(name="**Cs by min**: ", value="%.2f" % kda.csByMin)
+        embed.add_field(name="**Total time played**: ", value=kda.totalTime)
 
         await message.channel.send(embed=embed)
-        embed = discord.Embed(title="**Mean Global Kda and Cs**", color=discord.colour.Color.dark_purple())
-        #Todo: définir Thumbnails
+        embed = discord.Embed(title="**Mean Global Kda and Cs on " + args[2] + " games**", color=discord.colour.Color.dark_purple())
+
+        randomChampName = random.choice(list(kda.dictMeanKdaCs.keys()))
+        embed.set_thumbnail(url=RessourcesManager().getChampIconUrlByName(randomChampName))
+
         embed = embedKda(message, kda.dictMeanKdaCs, embed)
         await message.channel.send(embed=embed)
-        embed = discord.Embed(title="**Global Kda and Cs**", color=discord.colour.Color.dark_teal())
+        embed = discord.Embed(title="**Global Kda and Cs on " + args[2] + " games**", color=discord.colour.Color.dark_teal())
         embed = embedKda(message, kda.dictKdaCs, embed)
+
+        randomChampName2 = randomChampName
+        if len(kda.dictKdaCs) > 1:
+            while randomChampName2 == randomChampName:
+                randomChampName2 = random.choice(list(kda.dictKdaCs.keys()))
+
+        embed.set_thumbnail(url=RessourcesManager().getChampIconUrlByName(randomChampName2))
+
         await message.channel.send(embed=embed)
+
+
 client.run(TOKEN)
 
 

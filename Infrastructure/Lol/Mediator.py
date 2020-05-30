@@ -2,6 +2,7 @@ from Domain.Lol.Model.Commands.PersonalStatsCommand.CmdKdaCs import CmdKdaCs
 from Domain.Lol.Model.Commands.PersonalStatsCommand.CmdWinRate import CmdWinRate
 from Domain.Lol.Model.Dto.RiotApi.SummonerDto import SummonerDto
 from Domain.Lol.Model.Interfaces.IMediator import IMediator
+from Domain.Lol.Model.Services.RessourcesManager import RessourcesManager
 from Infrastructure.Lol.RiotWatcherHistory import RiotWatcherHistory
 from Infrastructure.Lol.RiotWatcherRanking import RiotWatcherRanking
 
@@ -25,15 +26,15 @@ class Mediator(IMediator):
         winRate.print()
         return winRate
 
-    def KdaCs(self, nbMatches, nbDays, name, mode=None, championId=None):
+    def KdaCs(self, nbMatches, nbDays, name, mode=None, championName=None):
         cmd = CmdKdaCs(nbMatches,
                          nbDays,
                          name,
                          mode,
                          self.getRiotWatcherHistory(name),
-                         championId,
-                         self.getRiotWatcherHistory(name).getLastMatchs(nbMatches, mode)
-                         )
+                         championName,
+                         self.getRiotWatcherHistory(name).getLastMatchs(nbMatches, mode, RessourcesManager().getChampIdByName(championName))
+                       )
         kdaCs = cmd.run()
         kdaCs.print()
         return kdaCs

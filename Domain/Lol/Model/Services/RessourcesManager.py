@@ -45,3 +45,11 @@ class RessourcesManager(metaclass=Singleton):
 
     def getChampIconUrlByName(self, name):
         return "http://ddragon.leagueoflegends.com/cdn/10.11.1/img/champion/"+ name +".png"
+
+    def getChampIdByName(self, name):
+        if name is None:
+            return None
+        for id in RessourcesManager.champions.keys():
+            if RessourcesManager.champions[id].lower() == name.lower():
+                return id
+        return None

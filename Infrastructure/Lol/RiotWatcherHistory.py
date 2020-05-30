@@ -29,8 +29,8 @@ class RiotWatcherHistory(History):
             return match.matches[0]
         return None 
     
-    def getLastMatchs(self, nbMatches, modeSet = None) -> MatchListDto:
-        return self.getMatchs(modeSet, None, None, 0, nbMatches, None, None)
+    def getLastMatchs(self, nbMatches, modeSet = None, championId=None) -> MatchListDto:
+        return self.getMatchs(modeSet, None, None, 0, nbMatches, None, championId)
     
     def getMatchs(self, modeSet, timeStart, timeEnd, indexStart, indexEnd, seasonSet, championSet):
         matchList = MatchListDto(self._lolWatcher.match.matchlist_by_account

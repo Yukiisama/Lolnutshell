@@ -6,7 +6,6 @@ from Infrastructure.Lol.Mediator import Mediator
 import random
 
 # Todo: Refactorer en objet quand comportement un peu plus défini
-
 from discord.utils import get
 import os
 
@@ -38,10 +37,21 @@ async def on_message(message):
 
 async def streamsCommands(message, command, args):
 
+    if command == "up":
+        s  = ""
+        s += " **OPGG du pauvre act II**:"
+        s += "\n **!a kda <pseudo> <number of games> (<mode> <champion>)**"
+        s += "\n see !a help "
+        await message.delete()
+        await message.channel.send(s)
+
     if command == "say":
-        sayMessage = args.join(" ")
-        message.delete().catch()
-        message.channel.send(sayMessage)
+        sayMessage = ""
+        for i in args:
+            if "say" not in i:
+                sayMessage += i
+        await message.delete()
+        await message.channel.send(sayMessage)
 
     if command == "corobizar":
         await message.channel.send("https://www.twitch.tv/corobizar")
@@ -59,15 +69,21 @@ async def streamsCommands(message, command, args):
 async def help(message, command, args):
 
     if command == "help":
-        say        = "!a say this is a random sentence : bot delete your message then write what you ask"
-        hero       = "!a hero <top/middle/jungle/adc/support>: bot send informations from u.gg about the champion you asked for"
-        ping       = "!a ping : a simple test of ping"
-        randomrole = "!a randomrole : give you a random League of Legends role"
-        twitch     = "!a <corobizar/mv/yukii/gummy> : bot send twitch channel of corobizar / mister mv / yukii or gummy"
-        level      = "!a level < pseudo > : bot send level of pseudo on League of Legends"
-        rank       = "!a rank < pseudo >: Send rank informations into the channel you asked for "
-        match      = "!a match < pseudo >: Send match live informations into the channel you asked for"
-
+        say        = "**!a say this is a random sentence** : bot delete your message then write what you ask"
+        hero       = "**!a hero <top/middle/jungle/adc/support>**: bot send informations from u.gg about the champion you asked for"
+        ping       = "**!a ping **: a simple test of ping"
+        randomrole = "**!a randomrole **: give you a random League of Legends role"
+        twitch     = "**!a <corobizar/mv/yukii/gummy> **: bot send twitch channel of corobizar / mister mv / yukii or gummy"
+        level      = "**!a level < pseudo > **: bot send level of pseudo on League of Legends"
+        rank       = "**!a rank < pseudo >**: Send rank informations into the channel you asked for "
+        match      = "**!a match < pseudo >**: Send match live informations into the channel you asked for"
+        kda        =" **!a kda <pseudo> <number of games> (<mode> <champion>)**: \n Send Kda informations on required number of games"
+        kda += "\n **number of games**: number of last games you want to analyse"
+        kda += "\n **mode** (is **optional**, if not precised take **all kinds of games** into account):"
+        kda += "\n **400** is normal draft, **420** soloqueue, **430** blind , **440** flex, **450** aram..."
+        kda += "\n look at https://github.com/Yukiisama/Lolnutshell/blob/master/Ressources/Json/queues.json"
+        kda += "\n and choose your **queueId** for others modes"
+        kda += "\n **champion** (is **optional**, if not precised take **all champs** into account): champion you want specific kda"
 
         embed = discord.Embed(description= "Help", color=12717994)
         embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/440116867802333186/585811500795691019/AW489065_20.gif")
@@ -79,6 +95,7 @@ async def help(message, command, args):
         embed.add_field(name="** #Command 6 **", value=level)
         embed.add_field(name="** #Command 7 **", value=rank)
         embed.add_field(name="** #Command 8 **", value=match)
+        embed.add_field(name="** #Command 9 **", value=kda, inline=False)
         await message.channel.send(embed=embed)
 
 

@@ -33,6 +33,7 @@ async def on_message(message):
     await rank(message, args[0], args)
     await match(message, args[0], args)
     await kda(message, args[0], args)
+    await clash(message, args[0], args)
 
 
 async def streamsCommands(message, command, args):
@@ -176,65 +177,97 @@ async def sendRank(message, args, participants):
     await message.channel.send(embed=embed)
 
 
-def embedKda(message, dict, embed):
+async def clash(message,command, args):
+    if command == "clash" or command == "onlyclash" or command == "onlyclashranked":
+
+        for arg in args:
+            if arg != "clash" and arg != "onlyclash" and arg != "onlyclashranked":
+                ar = ["kda"]
+                ar.append(arg)
+                ar.append("15")
+                if command == "onlyclash":
+                    ar.append("700")
+                if command == "onlyclashranked":
+                    ar.append("420")
+                await kda(message, "kda", ar)
+
+
+async def embedKda(message, dict, embed):
 
     for kdaCs in dict:
         string = ""
-        string += "\n** kills** " + str(dict[kdaCs][0])
-        string += "\n** deaths** " + str(dict[kdaCs][1]) + "\n** assists** " + str(dict[kdaCs][2])
-        string += "\n** cs** " + str(dict[kdaCs][3]) + "\n** cs by Min** " + str( "%.2f" % dict[kdaCs][6])
+        string += "\n** kills** " + str("%.2f" % dict[kdaCs][0])
+        string += "\n** deaths** " + str("%.2f" % dict[kdaCs][1]) + "\n** assists** " + str("%.2f" % dict[kdaCs][2])
+        string += "\n** cs** " + str("%.2f" %dict[kdaCs][3]) + "\n** cs by Min** " + str( "%.2f" % dict[kdaCs][6])
         string += "\n** nb games ** " + str(dict[kdaCs][4])
         string += "\n** time played ** " + str(dict[kdaCs][5]) + "\n"
         embed.add_field(name="**" + kdaCs + "**: ", value=string, inline=True)
+        if len(embed.fields) > 14:
+            await message.channel.send(embed=embed)
+            embed = discord.Embed(title="** next page **",color=discord.colour.Color.gold())
+            randomChampName = random.choice(list(dict.keys()))
+            embed.set_thumbnail(url=RessourcesManager().getChampIconUrlByName(randomChampName))
     return embed
 
 
-async def kda(message, command, args):
+async def kda(message, command, args, clash=None):
     # !a match name, nbgames, mode, champion
     mode = None
+    champ = None
     if len(args) > 3:
         mode = args[3]
-    champ = None
     if len(args) > 4:
         champ = args[4]
+    if len(args) == 4:
+        for char in mode:
+            if not char.isdigit():
+                champ = mode
+                mode = None
+                break
+
+    elif len(args) == 5 and mode == "all":
+        mode  = None
+
     if command == "kda":
         # Todo: faire nb days
-        kda   = MEDIATOR.KdaCs(int(args[2]), 0, args[1], mode, champ)
-        embed = discord.Embed(title="**Kda and Cs on " + args[2] + " games**", color=discord.colour.Color.dark_red())
 
+        kda   = MEDIATOR.KdaCs(int(args[2]), 0, args[1], mode, champ)
+        embed = discord.Embed(title="**"+ args[1] +"Kda and Cs on " + args[2] + " games**", color=discord.colour.Color.dark_red())
+        embed = embed.add_field(name="**Mode**: ", value=RessourcesManager().getModeNamebyId(mode))
         iconId = MEDIATOR.getProfile(args[1]).profileIconId
         embed.set_thumbnail(url=RessourcesManager().getIconUrlById(iconId))
 
-        embed.add_field(name="**Global Mean Kda**: ", value="\n** kills** "+ str(kda.meanGlobalKda[0]) + "\n** deaths** "
-                                                        + str(kda.meanGlobalKda[1]) +"\n** assists** "+ str(kda.meanGlobalKda[2]))
+        embed.add_field(name="**Global Mean Kda**: ", value="\n** kills** "+ str("%.2f" % kda.meanGlobalKda[0]) + "\n** deaths** "
+                                                        + str("%.2f" % kda.meanGlobalKda[1]) +"\n** assists** "+ str("%.2f" % kda.meanGlobalKda[2]))
 
-        embed.add_field(name="**Global Kda**: ",value="\n** kills** "+ str(kda.globalKda[0]) +
-                                                  "\n** deaths** "+ str(kda.globalKda[1]) +"\n** assists** "+ str(kda.globalKda[2]))
+        embed.add_field(name="**Global Kda**: ",value="\n** kills** "+ str("%.2f" % kda.globalKda[0]) +
+                                                  "\n** deaths** "+ str("%.2f" % kda.globalKda[1]) +"\n** assists** "+ str("%.2f" % kda.globalKda[2]))
 
-        embed.add_field(name="**Global Mean Cs**: ", value=kda.meanGlobalCs)
-        embed.add_field(name="**Global Cs**: ", value=kda.globalCs)
+        embed.add_field(name="**Global Mean Cs**: ", value="%.2f" % kda.meanGlobalCs)
+        embed.add_field(name="**Global Cs**: ", value="%.2f" % kda.globalCs)
         embed.add_field(name="**Cs by min**: ", value="%.2f" % kda.csByMin)
         embed.add_field(name="**Total time played**: ", value=kda.totalTime)
 
         await message.channel.send(embed=embed)
+
         embed = discord.Embed(title="**Mean Global Kda and Cs on " + args[2] + " games**", color=discord.colour.Color.dark_purple())
 
         randomChampName = random.choice(list(kda.dictMeanKdaCs.keys()))
         embed.set_thumbnail(url=RessourcesManager().getChampIconUrlByName(randomChampName))
 
-        embed = embedKda(message, kda.dictMeanKdaCs, embed)
+        embed = await embedKda(message, kda.dictMeanKdaCs, embed)
         await message.channel.send(embed=embed)
-        embed = discord.Embed(title="**Global Kda and Cs on " + args[2] + " games**", color=discord.colour.Color.dark_teal())
-        embed = embedKda(message, kda.dictKdaCs, embed)
+        if clash is not None:
+            embed = discord.Embed(title="**Global Kda and Cs on " + args[2] + " games**", color=discord.colour.Color.dark_teal())
 
-        randomChampName2 = randomChampName
-        if len(kda.dictKdaCs) > 1:
-            while randomChampName2 == randomChampName:
-                randomChampName2 = random.choice(list(kda.dictKdaCs.keys()))
+            randomChampName2 = randomChampName
+            if len(kda.dictKdaCs) > 1:
+                while randomChampName2 == randomChampName:
+                    randomChampName2 = random.choice(list(kda.dictKdaCs.keys()))
 
-        embed.set_thumbnail(url=RessourcesManager().getChampIconUrlByName(randomChampName2))
-
-        await message.channel.send(embed=embed)
+            embed.set_thumbnail(url=RessourcesManager().getChampIconUrlByName(randomChampName2))
+            embed = await embedKda(message, kda.dictKdaCs, embed)
+            await message.channel.send(embed=embed)
 
 
 client.run(TOKEN)

@@ -53,3 +53,11 @@ class RessourcesManager(metaclass=Singleton):
             if RessourcesManager.champions[id].lower() == name.lower():
                 return id
         return None
+
+    def getModeNamebyId(self, id):
+        if id is None:
+            return "All"
+        for i in self.queues:
+
+            if int(i['queueId']) == int(id):
+                return i['map'] + " " + i['description']

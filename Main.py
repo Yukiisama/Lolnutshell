@@ -14,8 +14,8 @@ def main():
     # do stuff ...
     #MEDIATOR.showLastMatch("yukíi")
     #MEDIATOR.winRate(20,0,"yukíi", None)
-    #MEDIATOR.KdaCs(20,0,"yukíi", None)
+    MEDIATOR.KdaCs(20,0,"yukíi", None)
     print("Bye")
-
+    
 
 main()
